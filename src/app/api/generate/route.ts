@@ -12,8 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const ARK_API_KEY = process.env.ARK_API_KEY;
-    const ARK_MODEL = process.env.ARK_MODEL || 'doubao-seed-2-0-pro-260215';
+    // 临时硬编码测试，后续改用环境变量
+    const ARK_API_KEY = '4a08d76d-61f1-45ab-ba29-c0a601f9147d';
+    const ARK_MODEL = 'doubao-seed-2-0-pro-260215';
 
     if (!ARK_API_KEY) {
       return NextResponse.json(
