@@ -387,8 +387,7 @@ export default function Home() {
                     style={{
                       backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.8)',
                       borderColor: selectedFormula === formula.id ? formula.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
-                      boxShadow: selectedFormula === formula.id ? `0 0 30px ${formula.color}20` : 'none',
-                      ringColor: formula.color
+                      boxShadow: selectedFormula === formula.id ? `0 0 30px ${formula.color}20` : 'none'
                     }}
                   >
                     {/* Header */}
