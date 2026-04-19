@@ -3,34 +3,173 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// 7大公式数据
 const formulas = [
   {
-    id: 'gameplay',
-    name: '玩法演示型',
-    subtitle: 'GAMEPLAY DEMO',
-    desc: '展示核心玩法，突出爽点',
-    color: '#00F0FF',
-    lightColor: '#0066FF',
+    id: 'formula1',
+    name: '末世生存+建造经营',
+    subtitle: '热门榜爆款公式',
+    icon: '🔥',
+    color: '#FF6B35',
+    case: {
+      game: 'Whiteout Survival',
+      popularity: '18万/周',
+      duration: '1分7秒',
+      days: '19天'
+    },
+    structure: [
+      { time: '0-3秒', content: '末世场景冲击（废墟/冰雪/火光）', type: '黄金3秒' },
+      { time: '3-15秒', content: '基地建造过程（加速+音效）', type: '核心玩法' },
+      { time: '15-30秒', content: '成长强化展示（成就）', type: '情绪爆点' },
+      { time: '30秒+', content: '"建立你的避难所"', type: 'CTA' }
+    ],
+    tags: ['建造经营/模拟', '成就进步', '末世题材'],
+    applyTo: '策略类、模拟经营类、生存类游戏',
+    tip: '重点展示建造过程的爽快感，用加速剪辑提升节奏'
   },
   {
-    id: 'kol',
-    name: 'KOL解说型',
-    subtitle: 'KOL REVIEW',
-    desc: '信任背书+专业推荐',
+    id: 'formula2',
+    name: '真人剧情+游戏混剪',
+    subtitle: '热门榜爆款公式',
+    icon: '🎬',
+    color: '#00D9FF',
+    case: {
+      game: 'Dark War:Survival',
+      popularity: '13万/周',
+      duration: '34秒',
+      days: '10天'
+    },
+    structure: [
+      { time: '0-3秒', content: '真人困境（被嘲笑/失败/危机）', type: '黄金3秒' },
+      { time: '3-15秒', content: '游戏高光时刻（反杀/胜利）', type: '核心玩法' },
+      { time: '情绪爆点', content: '真人表情惊喜+游戏特效叠加', type: '情绪共鸣' },
+      { time: '结尾', content: '"点击下载，开启你的传奇"', type: 'CTA' }
+    ],
+    tags: ['真人', '剧情叙事', '混合'],
+    applyTo: '中重度游戏、动作类、策略类',
+    tip: '真人与游戏的切换要流畅，情绪转折要自然'
+  },
+  {
+    id: 'formula3',
+    name: '解压治愈+放松逃离',
+    subtitle: '热门榜爆款公式',
+    icon: '🌿',
+    color: '#7ED321',
+    case: {
+      game: 'Big Farm Homestead',
+      popularity: '15万/周',
+      duration: '59秒',
+      days: '28天'
+    },
+    structure: [
+      { time: '0-3秒', content: '生活压力场景（工作/噪音/焦虑）', type: '黄金3秒' },
+      { time: '3-15秒', content: '游戏治愈画面（农场/动物/自然）', type: '核心玩法' },
+      { time: '情绪爆点', content: '收获/装饰/萌宠互动', type: '情绪共鸣' },
+      { time: '结尾', content: '"来放松一下吧，远离压力"', type: 'CTA' }
+    ],
+    tags: ['解压治愈', '放松逃离', '建造经营'],
+    applyTo: '模拟经营类、休闲类、治愈系游戏',
+    tip: '突出"逃离现实压力"的情绪价值，节奏要舒缓'
+  },
+  {
+    id: 'formula4',
+    name: '突发事件+快速响应',
+    subtitle: '飙升榜增长公式',
+    icon: '⚡',
+    color: '#FFD700',
+    case: {
+      game: '待监控',
+      popularity: '-',
+      duration: '30-60秒',
+      days: '7-14天'
+    },
+    structure: [
+      { time: '0-3秒', content: '紧急事件（敌人入侵/灾难发生）', type: '黄金3秒' },
+      { time: '15秒', content: '快速应对策略（调兵/建造/升级）', type: '核心玩法' },
+      { time: '情绪爆点', content: '成功防御/反击胜利', type: '情绪共鸣' },
+      { time: '结尾', content: '"你能应对这个挑战吗？"', type: 'CTA' }
+    ],
+    tags: ['技巧挑战', '逆境反击', '突发事件'],
+    applyTo: '策略类、塔防类、SLG游戏',
+    tip: '适合新活动上线、版本更新时快速起量',
+    note: '本周暂无数据，建议监控竞品版本更新'
+  },
+  {
+    id: 'formula5',
+    name: '真人出镜+技巧展示',
+    subtitle: '新创意榜霸榜公式',
+    icon: '🎯',
     color: '#FF006E',
-    lightColor: '#E11D48',
+    case: {
+      game: 'Mobile Legends',
+      popularity: '8-13万/周',
+      duration: '24秒',
+      days: '4-7天'
+    },
+    structure: [
+      { time: '0-3秒', content: '真人展示（主播/玩家出镜）', type: '黄金3秒' },
+      { time: '15秒', content: '游戏技巧演示（连招/走位/意识）', type: '核心玩法' },
+      { time: '情绪爆点', content: '精彩击杀/团战胜利', type: '情绪共鸣' },
+      { time: '结尾', content: '"学了这个技巧，你也能上分"', type: 'CTA' }
+    ],
+    tags: ['真人', '技巧挑战', '真实专业'],
+    applyTo: 'MOBA、FPS、动作类、竞技游戏',
+    tip: '真人出镜增加信任感，技巧展示要有可操作性'
   },
   {
-    id: 'simulation',
-    name: '真实模拟型',
-    subtitle: 'REAL SIMULATION',
-    desc: '场景代入+痛点解决',
-    color: '#FFBE0B',
-    lightColor: '#D97706',
+    id: 'formula6',
+    name: '新角色/新玩法首发',
+    subtitle: '新创意榜测试公式',
+    icon: '🆕',
+    color: '#9B59B6',
+    case: {
+      game: 'MONOPOLY GO!',
+      popularity: '11万/周',
+      duration: '1分24秒',
+      days: '6-8天'
+    },
+    structure: [
+      { time: '0-3秒', content: '新角色亮相/新玩法预告', type: '黄金3秒' },
+      { time: '15秒', content: '技能展示/玩法教程', type: '核心玩法' },
+      { time: '情绪爆点', content: '实战效果/玩家反应', type: '情绪共鸣' },
+      { time: '结尾', content: '"全新内容，立即体验"', type: 'CTA' }
+    ],
+    tags: ['剧情叙事', '沉浸剧情', '探索好奇'],
+    applyTo: '有IP联动、新角色、新玩法更新时',
+    tip: '适合版本更新、节日活动、IP联动期间投放'
   },
+  {
+    id: 'formula7',
+    name: '短平快+高频测试',
+    subtitle: '新创意榜测试公式',
+    icon: '⚡',
+    color: '#FFBE0B',
+    case: {
+      game: 'Hexa Diamonds',
+      popularity: '13万/周',
+      duration: '30秒',
+      days: '4-5天'
+    },
+    structure: [
+      { time: '0-3秒', content: '核心玩法展示', type: '黄金3秒' },
+      { time: '10秒', content: '快节奏剪辑（3-5个场景切换）', type: '核心玩法' },
+      { time: '情绪爆点', content: '爽点集中爆发', type: '情绪共鸣' },
+      { time: '结尾', content: '简单直接"点击下载"', type: 'CTA' }
+    ],
+    tags: ['玩法', '休闲治愈', '快节奏'],
+    applyTo: '超休闲游戏、轻度游戏、休闲益智类',
+    tip: '节奏要快，3-5秒内必须出现第一个爽点'
+  }
 ];
 
-// Theme toggle icons
+// 榜单对比数据
+const chartComparison = [
+  { name: '每周热门榜', period: '30-100天', formula: '深度内容+长期优化', duration: '60秒+', tags: '成就进步、解压治愈' },
+  { name: '每周飙升榜', period: '7-14天', formula: '热点事件+快速响应', duration: '30-60秒', tags: '技巧挑战、逆境反击' },
+  { name: '新创意榜', period: '4-8天', formula: '创新测试+快速迭代', duration: '15-40秒', tags: '真人、技巧挑战、探索好奇' }
+];
+
+// 主题切换图标
 const SunIcon = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <circle cx="12" cy="12" r="5" />
@@ -50,6 +189,7 @@ export default function Home() {
   const [result, setResult] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [activeTab, setActiveTab] = useState<'formulas' | 'comparison' | 'cases'>('formulas');
   
   const [formData, setFormData] = useState({
     gameName: '',
@@ -64,7 +204,6 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    // Check system preference
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDark(prefersDark);
     document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -78,7 +217,6 @@ export default function Home() {
 
   const handleGenerate = async () => {
     if (!selectedFormula) return;
-    
     setLoading(true);
     try {
       const response = await fetch('/api/generate', {
@@ -89,9 +227,7 @@ export default function Home() {
           projectInfo: formData,
         }),
       });
-
       const data = await response.json();
-      
       if (data.success) {
         setResult(data.result);
       } else {
@@ -105,13 +241,12 @@ export default function Home() {
   };
 
   const selectedFormulaData = formulas.find(f => f.id === selectedFormula);
-  const currentColor = isDark ? selectedFormulaData?.color : selectedFormulaData?.lightColor;
 
   if (!mounted) return null;
 
   return (
     <main className="min-h-screen transition-colors duration-500">
-      {/* Animated background grid */}
+      {/* Background */}
       <div className="fixed inset-0 pointer-events-none grid-bg opacity-50" />
       <div className={`fixed inset-0 pointer-events-none transition-opacity duration-500 ${isDark ? 'bg-gradient-to-b from-transparent via-[#0a0a0f]/50 to-[#0a0a0f]' : 'bg-gradient-to-b from-transparent via-[#f8f9fa]/50 to-[#f8f9fa]'}`} />
 
@@ -135,7 +270,7 @@ export default function Home() {
             >
               <div className="absolute inset-0 rounded-lg rotate-3" style={{ background: isDark ? 'linear-gradient(to bottom right, #00F0FF, #A855F7)' : 'linear-gradient(to bottom right, #0066FF, #7C3AED)' }} />
               <div className="absolute inset-0 rounded-lg flex items-center justify-center text-xl font-black" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
-                <span className="gradient-text">CF</span>
+                <span className="gradient-text">7F</span>
               </div>
             </motion.div>
             <div>
@@ -143,12 +278,34 @@ export default function Home() {
                 <span className="gradient-text">创意公式工坊</span>
               </h1>
               <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>
-                Creative Formula Studio
+                7大爆款公式 · 基于广大大数据
               </p>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Navigation Tabs */}
+            <div className="hidden md:flex items-center gap-2 mr-4">
+              {[
+                { id: 'formulas', label: '7大公式' },
+                { id: 'comparison', label: '榜单对比' },
+                { id: 'cases', label: '实战案例' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeTab === tab.id 
+                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
+                      : 'hover:bg-white/5'
+                  }`}
+                  style={{ color: activeTab === tab.id ? undefined : (isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)') }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -173,39 +330,27 @@ export default function Home() {
                 </motion.div>
               </AnimatePresence>
             </motion.button>
-            
-            <div className="hidden md:flex items-center gap-6 text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)' }}>
-              <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                AI 引擎就绪
-              </span>
-              <span>by 红叶李</span>
-            </div>
           </div>
         </div>
       </motion.header>
 
       <div className="relative max-w-7xl mx-auto px-6 py-12">
         <AnimatePresence mode="wait">
-          {!result ? (
+          {/* Formulas Tab */}
+          {activeTab === 'formulas' && (
             <motion.div
-              key="form"
+              key="formulas"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.3 }}
             >
               {/* Hero Section */}
-              <motion.section 
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              >
+              <motion.section className="text-center mb-12">
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
                   className="inline-block mb-4 px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase"
                   style={{ 
                     backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
@@ -213,360 +358,514 @@ export default function Home() {
                     color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'
                   }}
                 >
-                  AI 买量视频脚本生成器
+                  基于 2026-04-20 广大大榜单数据
                 </motion.div>
-                <h2 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                  <span className="block" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>选择你的</span>
-                  <span className="block gradient-text">创意公式</span>
+                <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
+                  <span className="block" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>7大</span>
+                  <span className="block gradient-text">爆款创意公式</span>
                 </h2>
-                <p className="text-lg max-w-xl mx-auto" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>
-                  基于火山方舟大模型，一键生成爆款短视频脚本
+                <p className="text-lg max-w-2xl mx-auto" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>
+                  每周热门榜 · 每周飙升榜 · 新创意榜<br/>
+                  覆盖策略/模拟类游戏完整投放周期
                 </p>
               </motion.section>
 
-              {/* Formula Cards */}
-              <section className="mb-16">
-                <div className="grid md:grid-cols-3 gap-6">
-                  {formulas.map((formula, index) => (
-                    <motion.button
-                      key={formula.id}
-                      initial={{ opacity: 0, y: 40 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
-                      onClick={() => setSelectedFormula(formula.id)}
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="group relative p-8 rounded-2xl border text-left transition-all duration-500"
-                      style={{
-                        backgroundColor: selectedFormula === formula.id 
-                          ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)')
-                          : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.6)'),
-                        borderColor: selectedFormula === formula.id 
-                          ? (isDark ? `${formula.color}50` : `${formula.lightColor}50`)
-                          : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
-                        boxShadow: selectedFormula === formula.id 
-                          ? `0 20px 40px ${isDark ? formula.color + '15' : formula.lightColor + '15'}`
-                          : 'none'
-                      }}
-                    >
-                      {/* Glow effect */}
+              {/* Formula Cards Grid */}
+              <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {formulas.map((formula, index) => (
+                  <motion.div
+                    key={formula.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05, duration: 0.5 }}
+                    onClick={() => setSelectedFormula(formula.id)}
+                    className={`group relative p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                      selectedFormula === formula.id
+                        ? 'ring-2'
+                        : 'hover:scale-[1.02]'
+                    }`}
+                    style={{
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.8)',
+                      borderColor: selectedFormula === formula.id ? formula.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
+                      boxShadow: selectedFormula === formula.id ? `0 0 30px ${formula.color}20` : 'none',
+                      ringColor: formula.color
+                    }}
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
                       <div 
-                        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
-                        style={{ background: isDark ? formula.color : formula.lightColor, opacity: 0.1 }}
-                      />
-                      
-                      {/* Icon */}
-                      <div 
-                        className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 transition-all duration-300"
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
                         style={{ 
-                          backgroundColor: isDark ? `${formula.color}15` : `${formula.lightColor}15`,
-                          color: isDark ? formula.color : formula.lightColor,
-                          boxShadow: selectedFormula === formula.id 
-                            ? `0 0 30px ${isDark ? formula.color + '30' : formula.lightColor + '30'}`
-                            : 'none'
+                          backgroundColor: `${formula.color}20`,
+                          border: `1px solid ${formula.color}40`
                         }}
                       >
-                        <FormulaIcon type={formula.id} />
+                        {formula.icon}
                       </div>
-
-                      {/* Content */}
-                      <div className="text-[10px] tracking-[0.2em] mb-2 uppercase" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>
+                      <span 
+                        className="text-xs px-2 py-1 rounded-full"
+                        style={{ 
+                          backgroundColor: `${formula.color}15`,
+                          color: formula.color
+                        }}
+                      >
                         {formula.subtitle}
-                      </div>
-                      <h3 className="text-2xl font-black mb-3 transition-colors" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
-                        {formula.name}
-                      </h3>
-                      <p className="text-sm leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)' }}>
-                        {formula.desc}
-                      </p>
+                      </span>
+                    </div>
 
-                      {/* Selection indicator */}
-                      {selectedFormula === formula.id && (
-                        <motion.div
-                          layoutId="selection"
-                          className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center"
-                          style={{ backgroundColor: isDark ? formula.color : formula.lightColor }}
+                    {/* Title */}
+                    <h3 className="text-xl font-black mb-2" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                      {formula.name}
+                    </h3>
+
+                    {/* Case Info */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>代表案例</span>
+                        <span className="font-medium" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>{formula.case.game}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>人气值</span>
+                        <span className="font-bold" style={{ color: formula.color }}>{formula.case.popularity}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>素材时长</span>
+                        <span style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>{formula.case.duration}</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {formula.tags.map((tag, i) => (
+                        <span 
+                          key={i}
+                          className="text-xs px-2 py-1 rounded"
+                          style={{ 
+                            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                            color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'
+                          }}
                         >
-                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </motion.div>
-                      )}
-                    </motion.button>
-                  ))}
-                </div>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Selection Indicator */}
+                    {selectedFormula === formula.id && (
+                      <motion.div
+                        layoutId="selection"
+                        className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: formula.color }}
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
               </section>
 
-              {/* Project Info Form */}
+              {/* Selected Formula Detail */}
               <AnimatePresence>
-                {selectedFormula && (
+                {selectedFormula && selectedFormulaData && (
                   <motion.section
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="max-w-3xl mx-auto"
+                    transition={{ duration: 0.4 }}
+                    className="mb-12"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="relative p-8 rounded-3xl border backdrop-blur-sm"
+                    <div 
+                      className="rounded-3xl border p-8"
                       style={{ 
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.8)',
-                        borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.9)',
+                        borderColor: selectedFormulaData.color + '40'
                       }}
                     >
-                      {/* Decorative corner accents */}
-                      <div className="absolute top-0 left-0 w-16 h-px" style={{ background: isDark ? 'linear-gradient(to right, #00F0FF, transparent)' : 'linear-gradient(to right, #0066FF, transparent)' }} />
-                      <div className="absolute top-0 left-0 w-px h-16" style={{ background: isDark ? 'linear-gradient(to bottom, #00F0FF, transparent)' : 'linear-gradient(to bottom, #0066FF, transparent)' }} />
-                      <div className="absolute top-0 right-0 w-16 h-px" style={{ background: isDark ? 'linear-gradient(to left, #A855F7, transparent)' : 'linear-gradient(to left, #7C3AED, transparent)' }} />
-                      <div className="absolute top-0 right-0 w-px h-16" style={{ background: isDark ? 'linear-gradient(to bottom, #A855F7, transparent)' : 'linear-gradient(to bottom, #7C3AED, transparent)' }} />
-                      
-                      <h3 className="text-2xl font-black mb-8 text-center">
-                        <span style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>填写</span>
-                        <span className="gradient-text"> 项目信息</span>
-                      </h3>
-
-                      <div className="space-y-6">
-                        {/* Row 1 */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                          <FormInput
-                            label="游戏名称 *"
-                            value={formData.gameName}
-                            onChange={(v) => setFormData({...formData, gameName: v})}
-                            placeholder="如：Lands of Jail"
-                            isDark={isDark}
-                          />
-                          <FormInput
-                            label="游戏类型 *"
-                            value={formData.gameType}
-                            onChange={(v) => setFormData({...formData, gameType: v})}
-                            placeholder="如：策略/模拟"
-                            isDark={isDark}
-                          />
+                      {/* Header */}
+                      <div className="flex items-center gap-4 mb-8">
+                        <div 
+                          className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
+                          style={{ 
+                            backgroundColor: `${selectedFormulaData.color}20`,
+                            border: `2px solid ${selectedFormulaData.color}`
+                          }}
+                        >
+                          {selectedFormulaData.icon}
                         </div>
+                        <div>
+                          <h3 className="text-2xl font-black" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                            {selectedFormulaData.name}
+                          </h3>
+                          <p style={{ color: selectedFormulaData.color }}>{selectedFormulaData.subtitle}</p>
+                        </div>
+                      </div>
 
-                        {/* Core gameplay */}
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>核心玩法 *</label>
-                          <textarea
-                            value={formData.coreGameplay}
-                            onChange={(e) => setFormData({...formData, coreGameplay: e.target.value})}
-                            className="w-full px-4 py-3.5 rounded-xl focus:outline-none transition-all duration-300 h-24 resize-none"
+                      {/* Structure Timeline */}
+                      <div className="mb-8">
+                        <h4 className="text-lg font-bold mb-4" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                          公式结构拆解
+                        </h4>
+                        <div className="space-y-4">
+                          {selectedFormulaData.structure.map((step, i) => (
+                            <div key={i} className="flex items-start gap-4">
+                              <div 
+                                className="w-20 text-sm font-bold text-right pt-1"
+                                style={{ color: selectedFormulaData.color }}
+                              >
+                                {step.time}
+                              </div>
+                              <div className="flex-1">
+                                <span 
+                                  className="inline-block px-2 py-0.5 rounded text-xs mb-1"
+                                  style={{ 
+                                    backgroundColor: `${selectedFormulaData.color}20`,
+                                    color: selectedFormulaData.color
+                                  }}
+                                >
+                                  {step.type}
+                                </span>
+                                <p style={{ color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)' }}>
+                                  {step.content}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Apply To & Tip */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div 
+                          className="p-4 rounded-xl"
+                          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }}
+                        >
+                          <h5 className="font-bold mb-2" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                            适用游戏类型
+                          </h5>
+                          <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>
+                            {selectedFormulaData.applyTo}
+                          </p>
+                        </div>
+                        <div 
+                          className="p-4 rounded-xl"
+                          style={{ backgroundColor: `${selectedFormulaData.color}10` }}
+                        >
+                          <h5 className="font-bold mb-2" style={{ color: selectedFormulaData.color }}>
+                            制作要点
+                          </h5>
+                          <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)' }}>
+                            {selectedFormulaData.tip}
+                          </p>
+                          {selectedFormulaData.note && (
+                            <p className="text-xs mt-2" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>
+                              {selectedFormulaData.note}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Generate Button */}
+                      <motion.button
+                        onClick={() => setActiveTab('cases')}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full mt-8 py-4 rounded-xl font-black text-lg transition-all"
+                        style={{
+                          background: `linear-gradient(135deg, ${selectedFormulaData.color}40, ${selectedFormulaData.color}20)`,
+                          border: `1px solid ${selectedFormulaData.color}60`,
+                          color: isDark ? '#ffffff' : '#1a1a2e'
+                        }}
+                      >
+                        使用此公式生成脚本 →
+                      </motion.button>
+                    </div>
+                  </motion.section>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* Comparison Tab */}
+          {activeTab === 'comparison' && (
+            <motion.div
+              key="comparison"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-3xl font-black text-center mb-8" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                三榜对比分析
+              </h2>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
+                      <th className="text-left py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>榜单类型</th>
+                      <th className="text-left py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>投放周期</th>
+                      <th className="text-left py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>核心公式</th>
+                      <th className="text-left py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>素材时长</th>
+                      <th className="text-left py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>关键标签</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chartComparison.map((row, i) => (
+                      <tr 
+                        key={i} 
+                        style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}
+                      >
+                        <td className="py-4 px-4 font-bold" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>{row.name}</td>
+                        <td className="py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}>{row.period}</td>
+                        <td className="py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}>{row.formula}</td>
+                        <td className="py-4 px-4" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}>{row.duration}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex flex-wrap gap-1">
+                            {row.tags.split('、').map((tag, j) => (
+                              <span 
+                                key={j}
+                                className="text-xs px-2 py-0.5 rounded"
+                                style={{ 
+                                  backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                                  color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)'
+                                }}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Strategy Cards */}
+              <div className="grid md:grid-cols-3 gap-6 mt-12">
+                {[
+                  { title: '长期优化', desc: '每周热门榜素材投放30-100天，需要持续优化迭代', icon: '📈', color: '#7ED321' },
+                  { title: '快速响应', desc: '飙升榜素材7-14天，抓住热点事件快速起量', icon: '⚡', color: '#FFD700' },
+                  { title: '高频测试', desc: '新创意榜4-8天快速测试，验证创意方向', icon: '🧪', color: '#FF006E' }
+                ].map((card, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="p-6 rounded-2xl"
+                    style={{ 
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.8)',
+                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`
+                    }}
+                  >
+                    <div className="text-4xl mb-4">{card.icon}</div>
+                    <h3 className="text-xl font-bold mb-2" style={{ color: card.color }}>{card.title}</h3>
+                    <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>{card.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Cases Tab - Script Generator */}
+          {activeTab === 'cases' && (
+            <motion.div
+              key="cases"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {!result ? (
+                <div className="max-w-3xl mx-auto">
+                  <h2 className="text-3xl font-black text-center mb-8" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
+                    使用公式生成脚本
+                  </h2>
+                  
+                  {/* Selected Formula Display */}
+                  {selectedFormulaData && (
+                    <div 
+                      className="p-4 rounded-xl mb-8 flex items-center justify-between"
+                      style={{ 
+                        backgroundColor: `${selectedFormulaData.color}15`,
+                        border: `1px solid ${selectedFormulaData.color}40`
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{selectedFormulaData.icon}</span>
+                        <div>
+                          <p className="font-bold" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>{selectedFormulaData.name}</p>
+                          <p className="text-xs" style={{ color: selectedFormulaData.color }}>{selectedFormulaData.subtitle}</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => setActiveTab('formulas')}
+                        className="text-sm px-3 py-1 rounded-lg hover:opacity-80"
+                        style={{ color: selectedFormulaData.color }}
+                      >
+                        更换公式 →
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Form */}
+                  <div 
+                    className="p-8 rounded-3xl border"
+                    style={{ 
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.9)',
+                      borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <div className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormInput label="游戏名称 *" value={formData.gameName} onChange={v => setFormData({...formData, gameName: v})} placeholder="如：Lands of Jail" isDark={isDark} />
+                        <FormInput label="游戏类型 *" value={formData.gameType} onChange={v => setFormData({...formData, gameType: v})} placeholder="如：策略/模拟" isDark={isDark} />
+                      </div>
+                      
+                      <FormTextArea label="核心玩法 *" value={formData.coreGameplay} onChange={v => setFormData({...formData, coreGameplay: v})} placeholder="简要描述游戏的核心玩法，如：经营监狱、管理囚犯、扩建设施..." isDark={isDark} />
+                      
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormInput label="目标用户 *" value={formData.targetAudience} onChange={v => setFormData({...formData, targetAudience: v})} placeholder="如：25-40岁男性玩家" isDark={isDark} />
+                        <div>
+                          <label className="text-xs uppercase tracking-wider mb-2 block" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>投放平台 *</label>
+                          <select
+                            value={formData.platform}
+                            onChange={(e) => setFormData({...formData, platform: e.target.value})}
+                            className="w-full px-4 py-3.5 rounded-xl focus:outline-none"
                             style={{
                               backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
                               border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
                               color: isDark ? '#ffffff' : '#1a1a2e'
                             }}
-                            placeholder="简要描述游戏的核心玩法，如：经营监狱、管理囚犯、扩建设施..."
-                          />
+                          >
+                            <option value="抖音">抖音</option>
+                            <option value="快手">快手</option>
+                            <option value="微信视频号">微信视频号</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="YouTube">YouTube</option>
+                          </select>
                         </div>
+                      </div>
 
-                        {/* Row 2 */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                          <FormInput
-                            label="目标用户 *"
-                            value={formData.targetAudience}
-                            onChange={(v) => setFormData({...formData, targetAudience: v})}
-                            placeholder="如：25-40岁男性玩家"
-                            isDark={isDark}
-                          />
-                          <div className="space-y-2">
-                            <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>投放平台 *</label>
-                            <select
-                              value={formData.platform}
-                              onChange={(e) => setFormData({...formData, platform: e.target.value})}
-                              className="w-full px-4 py-3.5 rounded-xl focus:outline-none transition-all duration-300"
-                              style={{
-                                backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
-                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                                color: isDark ? '#ffffff' : '#1a1a2e'
-                              }}
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>视频时长</label>
+                          <span className="font-bold" style={{ color: selectedFormulaData?.color || '#00F0FF' }}>{formData.duration}秒</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="15"
+                          max="60"
+                          step="5"
+                          value={formData.duration}
+                          onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormInput label="核心卖点（可选）" value={formData.sellingPoint} onChange={v => setFormData({...formData, sellingPoint: v})} placeholder="如：零氪也能玩..." isDark={isDark} />
+                        <FormInput label="用户痛点（可选）" value={formData.painPoint} onChange={v => setFormData({...formData, painPoint: v})} placeholder="如：肝度太高..." isDark={isDark} />
+                      </div>
+
+                      <motion.button
+                        onClick={handleGenerate}
+                        disabled={loading || !formData.gameName || !formData.gameType || !formData.coreGameplay || !formData.targetAudience || !selectedFormula}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full py-4 rounded-xl font-black text-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        style={{
+                          background: selectedFormulaData 
+                            ? `linear-gradient(135deg, ${selectedFormulaData.color}40, ${selectedFormulaData.color}20)`
+                            : 'linear-gradient(135deg, rgba(0,240,255,0.4), rgba(0,240,255,0.2))',
+                          border: `1px solid ${selectedFormulaData ? selectedFormulaData.color + '60' : 'rgba(0,240,255,0.6)'}`,
+                          color: isDark ? '#ffffff' : '#1a1a2e'
+                        }}
+                      >
+                        {loading ? 'AI 生成中...' : '生成脚本'}
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="max-w-4xl mx-auto"
+                >
+                  <div 
+                    className="rounded-3xl border overflow-hidden"
+                    style={{ 
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.9)',
+                      borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <div 
+                      className="p-6 border-b flex items-center justify-between"
+                      style={{ 
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                        borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        {selectedFormulaData && (
+                          <>
+                            <div 
+                              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                              style={{ backgroundColor: `${selectedFormulaData.color}20`, color: selectedFormulaData.color }}
                             >
-                              <option value="抖音" style={{ backgroundColor: isDark ? '#0a0a0f' : '#ffffff' }}>抖音</option>
-                              <option value="快手" style={{ backgroundColor: isDark ? '#0a0a0f' : '#ffffff' }}>快手</option>
-                              <option value="微信视频号" style={{ backgroundColor: isDark ? '#0a0a0f' : '#ffffff' }}>微信视频号</option>
-                              <option value="TikTok" style={{ backgroundColor: isDark ? '#0a0a0f' : '#ffffff' }}>TikTok</option>
-                              <option value="YouTube" style={{ backgroundColor: isDark ? '#0a0a0f' : '#ffffff' }}>YouTube</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Duration slider */}
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center">
-                            <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>视频时长</label>
-                            <span className="font-black text-lg" style={{ color: isDark ? '#00F0FF' : '#0066FF' }}>{formData.duration}秒</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="15"
-                            max="60"
-                            step="5"
-                            value={formData.duration}
-                            onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                            className="w-full"
-                          />
-                          <div className="flex justify-between text-[10px]" style={{ color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)' }}>
-                            <span>15s</span>
-                            <span>30s</span>
-                            <span>45s</span>
-                            <span>60s</span>
-                          </div>
-                        </div>
-
-                        {/* Optional fields */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                          <FormInput
-                            label="核心卖点（可选）"
-                            value={formData.sellingPoint}
-                            onChange={(v) => setFormData({...formData, sellingPoint: v})}
-                            placeholder="如：零氪也能玩..."
-                            isDark={isDark}
-                          />
-                          <FormInput
-                            label="用户痛点（可选）"
-                            value={formData.painPoint}
-                            onChange={(v) => setFormData({...formData, painPoint: v})}
-                            placeholder="如：肝度太高..."
-                            isDark={isDark}
-                          />
-                        </div>
-
-                        {/* Generate Button */}
-                        <motion.button
-                          onClick={handleGenerate}
-                          disabled={loading || !formData.gameName || !formData.gameType || !formData.coreGameplay || !formData.targetAudience}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full mt-8 py-5 rounded-xl font-black text-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 relative overflow-hidden group"
-                          style={{
-                            background: currentColor 
-                              ? `linear-gradient(135deg, ${currentColor}40, ${currentColor}20)`
-                              : (isDark ? 'linear-gradient(135deg, rgba(0,240,255,0.4), rgba(0,240,255,0.2))' : 'linear-gradient(135deg, rgba(0,100,255,0.4), rgba(0,100,255,0.2))'),
-                            border: `1px solid ${currentColor ? currentColor + '50' : (isDark ? '#00F0FF50' : '#0066FF50')}`,
-                            color: isDark ? '#ffffff' : '#1a1a2e'
+                              {selectedFormulaData.icon}
+                            </div>
+                            <div>
+                              <h2 className="font-bold" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>生成的脚本</h2>
+                              <p className="text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>{selectedFormulaData.name}</p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => navigator.clipboard.writeText(result)}
+                          className="px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                          style={{ 
+                            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                            color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)'
                           }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                          {loading ? (
-                            <span className="flex items-center justify-center gap-3">
-                              <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                              </svg>
-                              AI 生成中...
-                            </span>
-                          ) : (
-                            <span className="flex items-center justify-center gap-2">
-                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                              </svg>
-                              生成脚本
-                            </span>
-                          )}
-                        </motion.button>
+                          复制
+                        </button>
+                        <button
+                          onClick={() => {
+                            setResult(null);
+                            setActiveTab('formulas');
+                          }}
+                          className="px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                          style={{ 
+                            backgroundColor: isDark ? 'rgba(0,240,255,0.1)' : 'rgba(0,100,255,0.1)',
+                            border: `1px solid ${isDark ? 'rgba(0,240,255,0.3)' : 'rgba(0,100,255,0.3)'}`,
+                            color: isDark ? '#00F0FF' : '#0066FF'
+                          }}
+                        >
+                          重新生成
+                        </button>
                       </div>
-                    </motion.div>
-                  </motion.section>
-                )}
-              </AnimatePresence>
+                    </div>
+                    <div className="p-8">
+                      <pre 
+                        className="whitespace-pre-wrap leading-relaxed font-sans text-sm"
+                        style={{ color: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.9)' }}
+                      >
+                        {result}
+                      </pre>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
-          ) : (
-            /* Result Display */
-            <motion.section
-              key="result"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto"
-            >
-              <div 
-                className="relative rounded-3xl border overflow-hidden"
-                style={{ 
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.9)',
-                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                }}
-              >
-                {/* Header */}
-                <div 
-                  className="p-6 border-b flex items-center justify-between"
-                  style={{ 
-                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div 
-                      className="w-10 h-10 rounded-lg flex items-center justify-center"
-                      style={{ 
-                        backgroundColor: isDark ? `${currentColor}20` : `${currentColor}15`,
-                        color: currentColor
-                      }}
-                    >
-                      {selectedFormula && <FormulaIcon type={selectedFormula} />}
-                    </div>
-                    <div>
-                      <h2 className="font-black text-xl" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>生成的脚本</h2>
-                      <p className="text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>{selectedFormulaData?.name}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => navigator.clipboard.writeText(result)}
-                      className="px-5 py-2.5 rounded-lg transition-colors text-sm font-medium"
-                      style={{ 
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                        color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)'
-                      }}
-                    >
-                      复制
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setResult(null);
-                        setSelectedFormula(null);
-                      }}
-                      className="px-5 py-2.5 rounded-lg transition-colors text-sm font-medium"
-                      style={{ 
-                        backgroundColor: isDark ? 'rgba(0,240,255,0.1)' : 'rgba(0,100,255,0.1)',
-                        border: `1px solid ${isDark ? 'rgba(0,240,255,0.3)' : 'rgba(0,100,255,0.3)'}`,
-                        color: isDark ? '#00F0FF' : '#0066FF'
-                      }}
-                    >
-                      重新生成
-                    </motion.button>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-8">
-                  <pre 
-                    className="whitespace-pre-wrap leading-relaxed font-sans text-sm"
-                    style={{ color: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)' }}
-                  >
-                    {result}
-                  </pre>
-                </div>
-
-                {/* Footer decoration */}
-                <div 
-                  className="h-1"
-                  style={{ 
-                    background: isDark 
-                      ? 'linear-gradient(to right, #00F0FF, #A855F7, #EC4899)' 
-                      : 'linear-gradient(to right, #0066FF, #7C3AED, #DB2777)' 
-                  }} 
-                />
-              </div>
-            </motion.section>
           )}
         </AnimatePresence>
       </div>
@@ -578,7 +877,7 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto px-6 py-8 text-center">
           <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.4)' }}>
-            Creative Formula Studio · Powered by 火山方舟 · Made by 红叶李
+            创意公式工坊 · 基于广大大 2026-04-20 榜单数据 · Made by 红叶李
           </p>
         </div>
       </footer>
@@ -586,14 +885,8 @@ export default function Home() {
   );
 }
 
-// Form Input Component
-function FormInput({ label, value, onChange, placeholder, isDark }: { 
-  label: string; 
-  value: string; 
-  onChange: (v: string) => void; 
-  placeholder: string;
-  isDark: boolean;
-}) {
+// Form Components
+function FormInput({ label, value, onChange, placeholder, isDark }: { label: string; value: string; onChange: (v: string) => void; placeholder: string; isDark: boolean }) {
   return (
     <div className="space-y-2">
       <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>
@@ -603,7 +896,7 @@ function FormInput({ label, value, onChange, placeholder, isDark }: {
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3.5 rounded-xl focus:outline-none transition-all duration-300"
+        className="w-full px-4 py-3.5 rounded-xl focus:outline-none transition-all"
         style={{
           backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
           border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
@@ -615,32 +908,23 @@ function FormInput({ label, value, onChange, placeholder, isDark }: {
   );
 }
 
-// Formula Icon Component
-function FormulaIcon({ type }: { type: string }) {
-  const icons: Record<string, React.ReactNode> = {
-    gameplay: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" fillOpacity="0.2"/>
-        <polygon points="5 3 19 12 5 21 5 3"/>
-      </svg>
-    ),
-    kol: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M12 2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3 3 3 0 0 1-3-3V5a3 3 0 0 1 3-3z" fill="currentColor" fillOpacity="0.2"/>
-        <path d="M12 2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3 3 3 0 0 1-3-3V5a3 3 0 0 1 3-3z"/>
-        <path d="M19 10.5c0 2.5-2 4.5-4.5 4.5h-5C7 15 5 13 5 10.5"/>
-        <path d="M8 15v4a4 4 0 0 0 8 0v-4"/>
-      </svg>
-    ),
-    simulation: (
-      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="2" y="3" width="20" height="14" rx="2" fill="currentColor" fillOpacity="0.2"/>
-        <rect x="2" y="3" width="20" height="14" rx="2"/>
-        <line x1="8" y1="21" x2="16" y2="21"/>
-        <line x1="12" y1="17" x2="12" y2="21"/>
-      </svg>
-    ),
-  };
-  
-  return icons[type] || null;
+function FormTextArea({ label, value, onChange, placeholder, isDark }: { label: string; value: string; onChange: (v: string) => void; placeholder: string; isDark: boolean }) {
+  return (
+    <div className="space-y-2">
+      <label className="text-xs uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }}>
+        {label}
+      </label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-4 py-3.5 rounded-xl focus:outline-none transition-all h-24 resize-none"
+        style={{
+          backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
+          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+          color: isDark ? '#ffffff' : '#1a1a2e'
+        }}
+        placeholder={placeholder}
+      />
+    </div>
+  );
 }
