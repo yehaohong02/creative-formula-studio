@@ -1,0 +1,113 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { formulaType, projectInfo } = body;
+
+    if (!formulaType || !projectInfo) {
+      return NextResponse.json(
+        { error: '缺少必要参数' },
+        { status: 400 }
+      );
+    }
+
+    const COZE_API_KEY = process.env.COZE_API_KEY;
+    const COZE_BOT_ID = process.env.COZE_BOT_ID;
+
+    if (!COZE_API_KEY || !COZE_BOT_ID) {
+      return NextResponse.json(
+        { error: '服务器配置错误' },
+        { status: 500 }
+      );
+    }
+
+    // 构建提示词
+    const prompt = buildPrompt(formulaType, projectInfo);
+
+    // 调用 Coze API
+    const response = await fetch('https://api.coze.cn/open_api/v2/chat', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${COZE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bot_id: COZE_BOT_ID,
+        user: 'creative-formula-user',
+        query: prompt,
+        stream: false,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Coze API 错误: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return NextResponse.json({
+      success: true,
+      result: data.messages?.[0]?.content || data.answer || '生成失败',
+    });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : '未知错误' },
+      { status: 500 }
+    );
+  }
+}
+
+function buildPrompt(formulaType: string, projectInfo: any) {
+  const formulaNames: Record<string, string> = {
+    'gameplay': '玩法演示型',
+    'kol': 'KOL解说型',
+    'simulation': '真实模拟型',
+  };
+
+  const formulaTemplates: Record<string, string> = {
+    'gameplay': `【黄金3秒】核心冲突/爽点（如：从零开始建帝国/被背叛后复仇/极限操作反杀）
+【15秒规则】每15秒一个情绪爆点
+【CTA】行动召唤（"点击下载，开启你的..."）`,
+    
+    'kol': `【信任前置】KOL自我介绍+专业背书
+【问题共鸣】"你们有没有遇到过..."
+【解决方案】游戏核心玩法
+【效果验证】数据/画面展示
+【CTA】"评论区告诉我..."`,
+    
+    'simulation': `【真实场景】生活化情境
+【痛点放大】"每次都要...太麻烦了"
+【产品介入】游戏如何解决
+【效果对比】使用前后
+【CTA】"你也来试试"`,
+  };
+
+  return `你是一位资深的AI买量视频创意策划师，擅长制作爆款短视频脚本。
+
+请使用【${formulaNames[formulaType]}】公式，为以下项目生成一个完整的短视频脚本：
+
+**项目信息：**
+- 游戏名称：${projectInfo.gameName}
+- 游戏类型：${projectInfo.gameType}
+- 核心玩法：${projectInfo.coreGameplay}
+- 目标用户：${projectInfo.targetAudience}
+- 视频时长：${projectInfo.duration}秒
+- 投放平台：${projectInfo.platform}
+${projectInfo.sellingPoint ? `- 核心卖点：${projectInfo.sellingPoint}` : ''}
+${projectInfo.painPoint ? `- 用户痛点：${projectInfo.painPoint}` : ''}
+
+**公式结构：**
+${formulaTemplates[formulaType]}
+
+**要求：**
+1. 严格按照公式结构生成
+2. 每个部分标注时间节点（如：0-3秒）
+3. 画面描述要具体、可执行
+4. 文案要口语化、有网感
+5. 总时长控制在${projectInfo.duration}秒内
+
+请生成完整的分镜脚本（含时间、画面、文案、音效），并在最后给出投放建议。`;
+}
