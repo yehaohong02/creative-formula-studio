@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const COZE_API_KEY = process.env.COZE_API_KEY;
-    const COZE_BOT_ID = process.env.COZE_BOT_ID;
+    const ARK_API_KEY = process.env.ARK_API_KEY;
+    const ARK_MODEL = process.env.ARK_MODEL || 'doubao-seed-2-0-pro-260215';
 
-    if (!COZE_API_KEY || !COZE_BOT_ID) {
+    if (!ARK_API_KEY) {
       return NextResponse.json(
-        { error: '服务器配置错误' },
+        { error: '服务器配置错误：缺少 ARK_API_KEY' },
         { status: 500 }
       );
     }
@@ -25,30 +25,45 @@ export async function POST(request: NextRequest) {
     // 构建提示词
     const prompt = buildPrompt(formulaType, projectInfo);
 
-    // 调用 Coze API
-    const response = await fetch('https://api.coze.cn/open_api/v2/chat', {
+    // 调用火山方舟 API
+    const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/responses', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${COZE_API_KEY}`,
+        'Authorization': `Bearer ${ARK_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        bot_id: COZE_BOT_ID,
-        user: 'creative-formula-user',
-        query: prompt,
-        stream: false,
+        model: ARK_MODEL,
+        input: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'input_text',
+                text: prompt,
+              },
+            ],
+          },
+        ],
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Coze API 错误: ${response.status}`);
+      const errorData = await response.text();
+      console.error('ARK API Error:', errorData);
+      throw new Error(`火山方舟 API 错误: ${response.status}`);
     }
 
     const data = await response.json();
     
+    // 解析火山方舟响应格式
+    const result = data.output?.[0]?.content?.[0]?.text || 
+                   data.choices?.[0]?.message?.content ||
+                   '生成失败';
+    
     return NextResponse.json({
       success: true,
-      result: data.messages?.[0]?.content || data.answer || '生成失败',
+      result: result,
     });
 
   } catch (error) {
