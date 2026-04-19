@@ -617,7 +617,7 @@ function FormInput({ label, value, onChange, placeholder, isDark }: {
 
 // Formula Icon Component
 function FormulaIcon({ type }: { type: string }) {
-  const icons: Record<string, JSX.Element> = {
+  const icons: Record<string, React.ReactNode> = {
     gameplay: (
       <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
         <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" fillOpacity="0.2"/>
