@@ -88,7 +88,7 @@ const formulas = [
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { formulaId, gameDescription, platform, selectedTitle, version } = body;
+    const { formulaId, gameDescription, platform, batch } = body;
 
     if (!formulaId || !gameDescription) {
       return NextResponse.json(
@@ -110,24 +110,67 @@ export async function POST(request: NextRequest) {
     const ARK_API_KEY = '4a08d76d-61f1-45ab-ba29-c0a601f9147d';
     const ARK_MODEL = 'doubao-seed-2-0-pro-260215';
 
-    let result = '';
+    // 构建提示词 - 生成10个标题
+    const prompt = buildTitlePrompt(formula, gameDescription, platform, batch);
+
+    // 调用火山方舟 API
+    const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${ARK_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: ARK_MODEL,
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        max_tokens: 800,
+        temperature: 0.9,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('ARK API Error:', errorData);
+      return NextResponse.json(
+        { error: `AI 服务错误: ${response.status} - ${errorData.slice(0, 200)}` },
+        { status: 500 }
+      );
+    }
+
+    const data = await response.json();
+    console.log('ARK API Response:', JSON.stringify(data, null, 2));
     
-    // 根据请求类型生成不同内容
-    if (version === 'oneminute') {
-      // 只生成一分钟数据版
-      const prompt = buildOneMinutePrompt(formula, gameDescription, platform, selectedTitle);
-      result = await callArkAPI(ARK_API_KEY, ARK_MODEL, prompt);
-    } else {
-      // 生成三个版本（激进、猎奇、数据）
-      const prompt = buildThreeVersionsPrompt(formula, gameDescription, platform, selectedTitle);
-      result = await callArkAPI(ARK_API_KEY, ARK_MODEL, prompt);
+    const content = data.choices?.[0]?.message?.content || '';
+    
+    if (!content) {
+      console.error('Empty content from ARK API:', data);
+      return NextResponse.json(
+        { error: 'AI 返回内容为空' },
+        { status: 500 }
+      );
+    }
+    
+    // 解析标题列表
+    const titles = parseTitles(content);
+    
+    if (titles.length === 0) {
+      console.warn('No titles parsed from content:', content);
+      // 返回原始内容作为备选
+      return NextResponse.json({
+        success: true,
+        titles: [content.slice(0, 100) + '...'],
+        raw: content,
+      });
     }
     
     return NextResponse.json({
       success: true,
-      result: result,
-      selectedTitle: selectedTitle,
-      version: version || 'three',
+      titles: titles,
     });
 
   } catch (error: any) {
@@ -139,119 +182,41 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function callArkAPI(apiKey: string, model: string, prompt: string) {
-  const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      max_tokens: 2500,
-      temperature: 0.8,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.text();
-    console.error('ARK API Error:', errorData);
-    throw new Error(`AI 服务错误: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const result = data.choices?.[0]?.message?.content || '';
+function buildTitlePrompt(formula: any, gameDescription: string, platform: string = '抖音', batch: number = 1) {
+  const seedVariation = batch > 1 ? `（第${batch}批，请提供与之前不同的创意）` : '';
   
-  if (!result) {
-    throw new Error('AI 返回内容为空');
-  }
-  
-  return result;
-}
-
-function buildThreeVersionsPrompt(formula: any, gameDescription: string, platform: string = '抖音', selectedTitle: string) {
-  const structureText = formula.structure.map((s: any, i: number) => 
-    `${i + 1}. 【${s.type}】${s.time} - ${s.content}`
-  ).join('\n');
-
-  return `你是一位资深的AI买量视频创意策划师。
+  return `你是一位资深的短视频创意策划师，擅长写爆款标题。
 
 **游戏**：${gameDescription}
 **平台**：${platform}
 **公式**：${formula.name}
-**核心创意标题**：${selectedTitle}
+**公式特点**：${formula.tip}${seedVariation}
 
-**公式结构**：
-${structureText}
-
-**任务**：基于以上信息，生成3个不同版本的完整短视频脚本。
-
-**三个版本要求**：
-- **版本A（激进版）**：节奏更快，冲突更强，适合追求刺激的用户
-- **版本B（猎奇版）**：制造悬念，引发好奇，适合猎奇心理强的用户
-- **版本C（数据版）**：突出数字、成就、对比，适合理性决策的用户
-
-**每个版本必须包含**：
-1. 严格按公式结构生成
-2. 围绕核心标题「${selectedTitle}」展开
-3. 标注时间节点（如：0-3秒）
-4. 格式：时间 | 画面描述 | 文案/音效
-5. 每个部分要具体可执行
-
-**输出格式**：
-# 版本A：激进版
-[完整脚本...]
-
-# 版本B：猎奇版
-[完整脚本...]
-
-# 版本C：数据版
-[完整脚本...]
-
-# 投放建议
-- 版本A适合：...
-- 版本B适合：...
-- 版本C适合：...
-
-请生成三个版本的完整脚本：`;
-}
-
-function buildOneMinutePrompt(formula: any, gameDescription: string, platform: string = '抖音', selectedTitle: string) {
-  const structureText = formula.structure.map((s: any, i: number) => 
-    `${i + 1}. 【${s.type}】${s.time} - ${s.content}`
-  ).join('\n');
-
-  return `你是一位资深的AI买量视频创意策划师。
-
-**游戏**：${gameDescription}
-**平台**：${platform}
-**公式**：${formula.name}
-**核心创意标题**：${selectedTitle}
-
-**公式结构**：
-${structureText}
-
-**任务**：基于以上信息，生成1个60秒精简版脚本（一分钟数据版）。
+**任务**：生成10个不同的短视频标题/钩子文案
 
 **要求**：
-- **一分钟数据版**：60秒精简版，数据密度高，节奏紧凑，信息量大
-- 要比其他版本更详细，数据点更多（转化率、ROI、用户数等）
-- 节奏更紧凑，每句话都要有信息量
-- 严格按公式结构生成
-- 围绕核心标题「${selectedTitle}」展开
-- 标注时间节点（如：0-3秒）
-- 格式：时间 | 画面描述 | 文案/音效
-- 每个部分要具体可执行
+1. 每个标题15-30字，口语化、有网感
+2. 符合${platform}平台风格
+3. 结合「${formula.name}」公式的特点
+4. 要有吸引力，能抓住用户眼球
+5. 每个标题用换行分隔，不要编号
 
 **输出格式**：
-# 版本D：一分钟数据版
-[完整脚本...]
+直接输出10个标题，每行一个，不要其他说明文字。
 
-请生成一分钟数据版的完整脚本：`;
+请生成10个标题：`;
+}
+
+function parseTitles(content: string): string[] {
+  // 按行分割并清理
+  const lines = content.split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .filter(line => !line.match(/^\d+[\.、]/)) // 移除编号
+    .map(line => line.replace(/^[""'']|[""'']$/g, '')) // 移除引号
+    .map(line => line.replace(/^[-•*]\s*/, '')) // 移除列表符号
+    .filter(line => line.length >= 5 && line.length <= 100);
+  
+  // 返回前10个
+  return lines.slice(0, 10);
 }
